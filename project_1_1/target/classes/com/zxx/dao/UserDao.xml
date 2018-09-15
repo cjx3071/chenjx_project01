@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zxx.dao.UserDao">
+	 <select id="selectAllUser" resultType="com.zxx.beans.User">
+	 	SELECT * FROM user 
+	 </select>
+	 
+	 <select id="selectUserById" resultType="com.zxx.beans.User" parameterType="int">
+	 	SELECT * FROM user WHERE uid=#{uid}
+	 </select>
+	 
+  <insert id="insertUser"   parameterType="com.zxx.beans.User">
+	 	INSERT user  VALUES (#{uid},#{uusername}, #{uname}, #{usex}, #{utelephone}, #{uphone}, #{uemail}, #{uaddress}, #{utime}, #{ugrade}, #{uintegral}, #{ustate},#{sreason}, #{r_uid})
+	 </insert>
+	 
+<update id="updateUserById"  parameterType="com.zxx.beans.User">
+		UPDATE user set uusername=#{uusername}, uname=#{uname}, usex=#{usex}, utelephone=#{utelephone}, uphone=#{uphone}, uemail=#{uemail}, uaddress=#{uaddress}, utime=#{utime}, ugrade=#{ugrade}, uintegral=#{uintegral}, ustate=#{ustate}, r_uid=#{r_uid}
+			WHERE uid=#{uid}
+	</update>
+	 
+	 <delete id="deleteUserById" parameterType="com.zxx.beans.User">
+	
+		DELETE FROM  user WHERE uid=#{uid}
+	</delete> 
+	 
+</mapper>

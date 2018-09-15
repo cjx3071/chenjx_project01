@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zxx.dao.StoreDao">
+	 <select id="selectAllStore" resultType="com.zxx.beans.Store">
+	 	SELECT * FROM store 
+	 </select>
+	 
+	 <select id="selectStore" resultType="com.zxx.beans.Store" parameterType="string">
+	 	SELECT * FROM store WHERE sstate=#{sstate} 
+	 </select>
+	 
+	 
+	 <select id="selectStoreById" resultType="com.zxx.beans.Store" parameterType="int">
+	 	SELECT * FROM store WHERE sid=#{sid}
+	 </select>
+	 
+  <insert id="insertStore"   parameterType="com.zxx.beans.Store">
+	 	INSERT store  VALUES (#{sid}, #{sname}, #{sclass}, #{stype}, #{sm_info}, #{sinfo}, #{stime}, #{sstate}, #{u_id})
+	 </insert>
+	 
+<update id="updateStoreById"  parameterType="com.zxx.beans.Store">
+		UPDATE store set sreason=#{sreason}, sstate=#{sstate},
+			WHERE sid=#{sid}
+	</update>
+	 
+	 <delete id="deleteStoreById" parameterType="com.zxx.beans.Store">
+	
+		DELETE FROM  store WHERE sid=#{sid}
+	</delete> 
+	 
+</mapper>

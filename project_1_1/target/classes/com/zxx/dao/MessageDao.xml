@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zxx.dao.MessageDao">
+	<select id="selectAllMessage" resultType="message">
+		SELECT * FROM message
+	</select>
+	<update id="updateMstate" parameterType="int">
+		UPDATE message SET mstate='已浏览' WHERE id=${value}
+	</update>
+	<delete id="deleteMessageById"  parameterType="int">
+		DELETE FROM message WHERE 
+		<if test="value !=null and value !=''"> 
+			id=${value}
+		</if>
+		
+	</delete>
+	<delete id="deleteAllMessage"  parameterType="message">
+		DELETE FROM message WHERE id=${message.id}
+	</delete>
+	<select id="selectMessageById" resultType="message">
+		SELECT * FROM message WHERE 
+		<if test="value !=null and value !=''"> 
+			id=${value}
+		</if>
+	</select>
+</mapper>

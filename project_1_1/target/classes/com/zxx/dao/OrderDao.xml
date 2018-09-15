@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zxx.dao.OrderDao">
+	<!-- <resultMap type="order" id="AllOrder">
+		<id column="oid" property="id"/>
+		<result column="otime" property="otime"/>
+		<result column="ostate" property="ostate"/>
+		
+		<collection property="orderdail" ofType="Orderdail">
+			<result column="onum" property="onum"/>
+			
+			<association property="product" javaType="Product">
+				<id column="id" property="p_id"/>
+				<result column="productname" property="productname"/>
+				<result column="originalprice" property="originalprice"/>
+				<result column="nowtheprice" property="nowtheprice"/>
+			</association>
+		</collection>
+	</resultMap> -->
+
+	<!-- <resultMap type="oop" id="AllOrder">
+		<id column="oid" property="oid"/>
+		<result column="otime" property="otime"/>
+	</resultMap> -->
+	<!--查询所有订单  -->
+	<select id="selectAllOrder" resultType="oop">
+		SELECT
+			t1.oid,t1.otime,t1.ostate,
+			t3.productname,t3.id p_id,t3.originalprice,t3.nowtheprice,
+			t2.onum,
+			t3.nowtheprice*t2.onum AS price
+			FROM `order` t1,orderdail t2,product t3
+		WHERE t1.oid=t2.o_oid AND t2.o_pid=t3.id
+	</select>
+	
+	<!--根据id查询订单  -->
+	<select id="selectOrderById" resultType="oop">
+		SELECT
+			t1.oid,t1.otime,t1.ostate,
+			t3.productname,t3.id p_id,t3.originalprice,t3.nowtheprice,
+			t2.onum,
+			t3.nowtheprice*t2.onum AS price
+		FROM `order` t1,orderdail t2,product t3
+		WHERE t1.oid=t2.o_oid AND t2.o_pid=t3.id AND t1.oid=#{id}
+	</select>
+	
+	<!--根据时间模糊查询订单  -->
+	<select id="selectOrderByOtime" resultType="oop" >
+		SELECT
+			t1.oid,t1.otime,t1.ostate,
+			t3.productname,t3.id p_id,t3.originalprice,t3.nowtheprice,
+			t2.onum,
+			t3.nowtheprice*t2.onum AS price
+		FROM `order` t1,orderdail t2,product t3
+		WHERE t1.oid=t2.o_oid AND t2.o_pid=t3.id AND otime LIKE '${value}%';
+	</select>
+	
+	<!--订单详情  -->
+	<select id="selectDail" resultType="oop">
+		SELECT
+			t1.oid,t1.otime,t1.ostate,
+			t3.productname,t3.id p_id,t3.originalprice,t3.nowtheprice,
+			t2.onum,
+			t3.nowtheprice*t2.onum AS price
+			FROM `order` t1,orderdail t2,product t3
+		WHERE t1.oid=t2.o_oid AND t2.o_pid=t3.id AND t1.id=#{id};
+	</select>
+	
+	<!-- 删除订单 -->
+	<delete id="delectOrderByid" parameterType="int">
+		DELETE FROM `order` WHERE oid=#{id}
+	</delete>
+	
+	<update id="updateOrder">
+		UPDATE `order` SET  ostate='已发货' WHERE oid=#{id};
+	</update>
+	
+	<select id="selectAllOOP" resultType="oop">
+		SELECT
+			t1.id,t1.oid,t1.otime,t1.ostate,
+			t3.productname,t3.id p_id,t3.originalprice,t3.nowtheprice,
+			t2.onum,
+			t3.nowtheprice*t2.onum AS price
+			FROM `order` t1,orderdail t2,product t3
+		WHERE t1.oid=t2.o_oid AND t2.o_pid=t3.id;
+	</select>
+	
+	<!--查询总交易金额  -->
+	<select id="selectAccount" resultType="int">
+		SELECT
+			SUM(z1.price)
+		FROM (SELECT
+			t1.id,t1.oid,t1.otime,t1.ostate,
+			t3.productname,t3.id p_id,t3.originalprice,t3.nowtheprice,
+			t2.onum,
+			t3.nowtheprice*t2.onum AS price
+			FROM `order` t1,orderdail t2,product t3
+		WHERE t1.oid=t2.o_oid AND t2.o_pid=t3.id) AS z1
+		WHERE z1.ostate !='失败';
+	</select>
+	
+	<!--查询当天交易金额  -->
+	<select id="selectTodayMoney" resultType="int">
+		SELECT
+			SUM(z1.price)
+		FROM (SELECT
+			t1.id,t1.oid,t1.otime,t1.ostate,
+			t3.productname,t3.id p_id,t3.originalprice,t3.nowtheprice,
+			t2.onum,
+			t3.nowtheprice*t2.onum AS price
+			FROM `order` t1,orderdail t2,product t3
+		WHERE t1.oid=t2.o_oid AND t2.o_pid=t3.id) AS z1
+		WHERE z1.otime LIKE '${value}%' and z1.ostate !='失败'
+	</select>
+	
+	<select id="selectSuccessOrder" resultType="int">
+		SELECT COUNT(z2.id) FROM `order` z2 WHERE z2.ostate !='失败';
+	</select>
+	
+	<select id="selectTodayOrder" resultType="oop">
+		SELECT
+			t1.id,t1.oid,t1.otime,t1.ostate,
+			t3.productname,t3.id p_id,t3.originalprice,t3.nowtheprice,
+			t2.onum,
+			t3.nowtheprice*t2.onum AS price
+			FROM `order` t1,orderdail t2,product t3
+		WHERE t1.oid=t2.o_oid AND t2.o_pid=t3.id AND t1.otime LIKE '${value}%';
+	</select>
+	<!--查询当天订单数量  -->
+	<select id="selectTodayAccount" resultType="int">
+		SELECT
+			COUNT(z1.id)
+		FROM `order` z1 WHERE z1.otime LIKE '${value}%';
+	</select>
+	
+	<!--查询当月订单  -->
+	<select id="selectMonthOrder" resultType="oop">
+		SELECT
+			t1.id,t1.oid,t1.otime,t1.ostate,
+			t3.nowtheprice*t2.onum AS price
+			FROM `order` t1,orderdail t2,product t3
+		WHERE t1.oid=t2.o_oid AND t2.o_pid=t3.id AND t1.ostate !='失败' AND t1.otime LIKE '${value}%';
+	</select>
+	
+	<!--查询当月订单数量 -->
+	<select id="selectMonthAccount" resultType="int">
+		SELECT COUNT(t1.oid)
+		FROM `order` t1 WHERE t1.ostate !='失败' AND t1.otime  LIKE '${value}%';
+	</select>
+	
+	<!--查询交易失败的订单  -->
+	<select id="selectBadOrder" resultType="oop">
+		SELECT
+			t1.id,t1.oid,t1.otime,t1.ostate,t1.explain,t1.waitpay,
+			t3.productname,t3.id p_id,t3.originalprice,t3.nowtheprice,
+			t2.onum,
+			t3.nowtheprice*t2.onum AS price
+			FROM `order` t1,orderdail t2,product t3
+		WHERE t1.oid=t2.o_oid AND t2.o_pid=t3.id AND t1.ostate='失败';
+	</select>
+	
+	<!--更改订单，把未退款的退款  -->
+	<update id="updateBadOrder">
+		UPDATE `order` t1 SET t1.waitpay='已退款' WHERE t1.oid=#{id};
+	</update>
+	
+	<!--根据id查询交易失败的订单  -->
+	<select id="selectBadOrderByid" resultType="oop">
+		SELECT
+			t1.id,t1.oid,t1.otime,t1.ostate,t1.explain,t1.waitpay,
+			t3.productname,t3.id p_id,t3.originalprice,t3.nowtheprice,
+			t2.onum,
+			t3.nowtheprice*t2.onum AS price
+			FROM `order` t1,orderdail t2,product t3
+		WHERE t1.oid=t2.o_oid AND t2.o_pid=t3.id AND t1.ostate='失败' AND t1.oid=#{id};
+	</select>
+	
+	<!--根据时间模糊查询交易失败的订单  -->
+	<select id="selectBadOrderByOtime" resultType="oop">
+		SELECT
+			t1.id,t1.oid,t1.otime,t1.ostate,t1.explain,t1.waitpay,
+			t3.productname,t3.id p_id,t3.originalprice,t3.nowtheprice,
+			t2.onum,
+			t3.nowtheprice*t2.onum AS price
+			FROM `order` t1,orderdail t2,product t3
+		WHERE t1.oid=t2.o_oid AND t2.o_pid=t3.id AND t1.ostate='失败' AND t1.otime LIKE '${value}%';
+	</select>
+	
+	<!--根据已退款查询订单  -->
+	<select id="selectBadOrderBypay" resultType="oop">
+		SELECT
+			t1.id,t1.oid,t1.otime,t1.ostate,t1.explain,t1.waitpay,
+			t3.productname,t3.id p_id,t3.originalprice,t3.nowtheprice,
+			t2.onum,
+			t3.nowtheprice*t2.onum AS price
+			FROM `order` t1,orderdail t2,product t3
+		WHERE t1.oid=t2.o_oid AND t2.o_pid=t3.id AND t1.ostate='失败' AND t1.waitpay='已退款';
+	</select>
+	
+	<!--根据未退款查询订单  -->
+	<select id="selectNoPay" resultType="oop">
+		SELECT
+			t1.id,t1.oid,t1.otime,t1.ostate,t1.explain,t1.waitpay,
+			t3.productname,t3.id p_id,t3.originalprice,t3.nowtheprice,
+			t2.onum,
+			t3.nowtheprice*t2.onum AS price
+			FROM `order` t1,orderdail t2,product t3
+		WHERE t1.oid=t2.o_oid AND t2.o_pid=t3.id AND t1.ostate='失败' AND t1.waitpay='未退款';
+	</select>
+	
+	<!--批量删除订单  -->
+	<delete id="deleteOrderByArray">
+		DELETE FROM `order` WHERE `order`.oid in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+</mapper>

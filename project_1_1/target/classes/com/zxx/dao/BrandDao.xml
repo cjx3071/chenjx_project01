@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zxx.dao.BrandDao">
+
+	 <!-- 分页SQL语句 -->  
+	<select id="selectBrands" resultType="com.zxx.beans.Brand">  
+	  SELECT   
+	  *  
+	  FROM brand 
+	  limit #{startPos},#{pageSize}   
+	</select>  
+	<!-- 取得记录的总数 -->  
+	<select id="getBrandsCount" resultType="int">  
+	  SELECT COUNT(*) FROM brand 
+	</select>
+	
+	<insert id="upload" parameterType="brand">
+	  INSERT INTO brand(brandId,brandname,brandimage,eachdistrict,branddescription,according,jointime)
+	  VALUES (#{brandId},#{brandname},#{brandimage},#{eachdistrict},#{branddescription},#{according},#{jointime});
+	 </insert> 
+	 
+ 	 <delete id="batchDelete" parameterType="int[]">
+	 	DELETE FROM brand
+		WHERE brandId IN
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	 </delete>
+	 
+	 <update id="updateBrandById" parameterType="brand">
+	 	UPDATE brand  
+	 	<set>
+	 		<if test="brandname != null and brandname != ''">brandname=#{brandname},</if>
+	 		<if test="brandimage != null and brandimage != ''">brandimage=#{brandimage},</if>
+	 		<if test="eachdistrict != null and eachdistrict != ''">eachdistrict=#{eachdistrict},</if>
+	 		<if test="jointime != null and jointime != ''">jointime=#{jointime},</if>
+	 		<if test="branddescription != null and branddescription != ''">branddescription=#{branddescription},</if>
+	 		<if test="according != null and according != ''">according=#{according},</if>
+	 	</set>
+	 	<where>
+	 		<if test="brandId !=null">brandId=#{brandId}</if>
+	 	</where>
+	 	<!-- UPDATE product  
+		SET productname=#{productname},originalprice=#{originalprice},nowtheprice=#{nowtheprice},eachdistrict=#{eachdistrict},jointime=#{jointime},reviewthestatus=#{reviewthestatus},material=#{material},brand=#{brand},weight=#{weight},keywords=#{keywords}
+		WHERE id=#{id} -->
+	 </update>
+	 
+	 <select id="fuzzyQueryByName" resultType="com.zxx.beans.Brand" parameterType="String">
+	 	SELECT * FROM brand 
+		WHERE brandname LIKE "%${brandname}%";
+	 </select>
+	 
+	 <select id="fuzzyQueryByTime" resultType="com.zxx.beans.Brand" parameterType="String">
+	 	SELECT * FROM brand 
+		WHERE jointime LIKE "${jointime}%";
+	 </select>
+	 
+	 <delete id="delectById" parameterType="int">
+	 	DELETE FROM brand
+		WHERE brandId=#{brandId}
+	 </delete>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

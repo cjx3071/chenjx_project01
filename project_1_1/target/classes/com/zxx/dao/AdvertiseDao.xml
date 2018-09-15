@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zxx.dao.AdvertiseDao">
+	 <select id="selectAll" resultType="com.zxx.beans.Advertise">
+	 	SELECT id,aid,aclass,apic,alength,awidth,aurl,atime FROM advertise
+	 </select>
+	 
+	 <insert id="addAdv" parameterType="advertise">
+	 	INSERT INTO
+		advertise(aId,aClass,aLength,aWidth,aUrl,aTime,aPic)
+		VALUES(#{aId},#{aClass},#{aLength},#{aWidth},#{aUrl},#{aTime},#{aPic})
+	 </insert>
+	
+	 <delete id="deleteAdv">
+		DELETE FROM advertise
+		WHERE id=#{value};
+	
+	</delete>
+	 
+	 <update id="updateAdv" parameterType="advertise">
+	 	UPDATE advertise 
+	 	<set>
+		<if test="aClass != null and aClass != ''">aClass=#{aClass},</if>
+		<if test="aLength != null and aLength != ''">aLength=#{aLength},</if>
+		<if test="aWidth != null and aWidth != ''">aWidth=#{aWidth},</if>
+		<if test="aId != null and aId != ''">aId=#{aId},</if>
+		<if test="aPic != null and aPic != ''">aPic=#{aPic},</if>
+		</set>
+		<where>
+               id=#{id}
+        </where>
+	 </update>
+</mapper>

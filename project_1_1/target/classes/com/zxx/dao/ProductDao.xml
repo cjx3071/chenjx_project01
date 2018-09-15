@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zxx.dao.ProductDao">
+
+	 <!-- 分页SQL语句 -->  
+	<select id="selectProducts" resultType="com.zxx.beans.Product">  
+	  SELECT   
+	  *  
+	  FROM product 
+	  limit #{startPos},#{pageSize}   
+	</select>  
+	<!-- 取得记录的总数 -->  
+	<select id="getProductsCount" resultType="int">  
+	  SELECT COUNT(*) FROM product 
+	</select>
+	
+	<insert id="newGoods" parameterType="product">
+	  INSERT INTO product(id,productname,originalprice,nowtheprice,eachdistrict,jointime,reviewthestatus,material,brand,weight,keywords)
+	  VALUES (#{id},#{productname},#{originalprice},#{nowtheprice},#{eachdistrict},#{jointime},#{reviewthestatus},#{material},#{brand},#{weight},#{keywords});
+	 </insert> 
+	 
+	 <delete id="batchDelete" parameterType="int[]">
+	 	DELETE FROM product
+		WHERE id IN
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	 </delete>
+	 
+	 
+	 <select id="fuzzyQueryByName" resultType="com.zxx.beans.Product" parameterType="String">
+	 	SELECT * FROM product 
+		WHERE productname LIKE "%${productname}%";
+	 </select>
+	 
+	 <select id="fuzzyQueryByTime" resultType="com.zxx.beans.Product" parameterType="String">
+	 	SELECT * FROM product 
+		WHERE jointime LIKE "${jointime}%";
+	 </select>
+	 
+	 
+	 <update id="updateProductById" parameterType="product">
+<!-- 	 	UPDATE product  
+	 	<set>
+	 		<if test="productname != null and productname != ''">productname=#{productname},</if>
+	 		<if test="originalprice != null and originalprice != ''">originalprice=#{originalprice},</if>
+	 		<if test="nowtheprice != null and nowtheprice != ''">nowtheprice=#{nowtheprice},</if>
+	 		<if test="eachdistrict != null and eachdistrict != ''">eachdistrict=#{eachdistrict},</if>
+	 		<if test="jointime != null and jointime != ''">jointime=#{jointime},</if>
+	 		<if test="reviewthestatus != null and reviewthestatus != ''">reviewthestatus=#{reviewthestatus},</if>
+	 		<if test="material != null and material != ''">material=#{material},</if>
+	 		<if test="brand != null and brand != ''">brand=#{brand},</if>
+	 		<if test="weight != null and weight != ''">weight=#{weight},</if>
+	 		<if test="keywords != null and keywords != ''">keywords=#{keywords}</if>
+	 	</set>
+	 	<where>
+	 		<if test="id!=null">id=#{id}</if>
+	 	</where> -->
+	 	UPDATE product  
+		SET productname=#{productname},originalprice=#{originalprice},nowtheprice=#{nowtheprice},eachdistrict=#{eachdistrict},jointime=#{jointime},reviewthestatus=#{reviewthestatus},material=#{material},brand=#{brand},weight=#{weight},keywords=#{keywords}
+		WHERE id=#{id}
+	 </update>
+	 
+	  <delete id="delectById" parameterType="int">
+	 	DELETE FROM product
+		WHERE id=#{id}
+	 </delete>
+	 
+	 <select id="stateOfTheQuery" resultType="String" parameterType="int">
+	 	SELECT reviewthestatus
+		FROM product
+		WHERE id=#{id};
+	 </select>
+	 
+	 <update id="modifyTheState" parameterType="product_r">
+	 	UPDATE product
+		SET reviewthestatus=#{reviewthestatus}
+		WHERE id=#{id};
+	 </update>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
